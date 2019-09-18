@@ -2,24 +2,24 @@
   <div class="page con">
     <div class="page-main">
       <van-cell-group class="info-main">
-        <van-field v-model="person.username" label="姓名" readonly input-align="right" />
-        <van-field v-model="person.phone" type="tel" label="手机号" readonly input-align="right" />
-        <van-field v-model="person.gender" type="text" label="性别" readonly input-align="right" />
-        <van-field v-model="person.idCard" type="tel" label="身份证号" readonly input-align="right" />
+        <van-field v-model="person.visitorsname" label="姓名" readonly input-align="right" />
+        <van-field v-model="person.visitorsphone" type="tel" label="手机号" readonly input-align="right" />
+        <van-field v-model="person.visitorssex" type="text" label="性别" readonly input-align="right" />
+        <van-field v-model="person.visitorsidcard" type="tel" label="身份证号" readonly input-align="right" />
       </van-cell-group>
       <van-cell-group class="info-main">
-        <van-field v-model="person.address" label="单位" readonly input-align="right" />
-        <van-field v-model="person.carId" type="tel" readonly label="车牌号" input-align="right" />
+        <van-field v-model="person.visitorsunit" label="单位" readonly input-align="right" />
+        <van-field v-model="person.platenumber" type="tel" readonly label="车牌号" input-align="right" />
       </van-cell-group>
       <van-cell-group class="info-main">
-        <van-field v-model="person.startDate" label="来访时间" readonly input-align="right" />
+        <van-field v-model="person.starttime" label="来访时间" readonly input-align="right" />
         <van-field v-model="person.endDate" label="结束时间" readonly input-align="right" />
-        <van-field v-model="person.remark" type="textarea" autosize readonly label="来访事由" input-align="right" />
-        <van-field v-model="person.allowPer" label="随访人员" readonly input-align="right" />
+        <van-field v-model="person.visitreason" type="textarea" autosize readonly label="来访事由" input-align="right" />
+        <van-field v-model="person.followname" label="随访人员" readonly input-align="right" />
       </van-cell-group>
       <van-cell-group class="info-main">
-        <van-field v-model="person.remark" type="textarea" autosize readonly label="备注" input-align="right" />
-        <div class="van-cell van-field" v-if="!isNopass">
+        <van-field v-model="person.remark" type="textarea" autosize label="备注" input-align="right" />
+        <div class="van-cell van-field" v-show="isQrcode">
           <div class="van-cell__title van-field__label"><span>预约码</span></div>
           <div class="van-cell__value">
             <div class="van-field__body only-img">
@@ -31,8 +31,8 @@
       </van-cell-group>
     </div>
     <div class="page-foot" v-if="isNopass">
-      <span class="bind-btn bind-suc" @click="Iknowe">审核通过</span>
-      <span class="bind-btn bind-lose" @click="Ireload">重新绑定</span>
+      <span class="bind-btn bind-suc" @click="updateStatus(1)">审核通过</span>
+      <span class="bind-btn bind-lose" @click="updateStatus(2)">审核不通过</span>
     </div>
     <!-- 遮罩层内容s -->
     <div class="prop-img" v-show="showUpload">
@@ -45,54 +45,62 @@
   </div>
 </template>
 <script>
-import { Toast } from 'vant'
 import QRCode from 'qrcodejs2' // 引入qrcode
-import { setTimeout } from 'timers'
 export default {
 	data() {
 		return {
-			person: {
-				username: '张满意',
-				phone: '18520838663',
-				gender: '男',
-				idCard: '411381199409094817',
-				address: '深圳市道控技术有限公司',
-				carId: '粤B 123456L',
-				startDate: '2019-09-08 11:11:11',
-				endDate: '2019-09-08 12:12:12',
-				remark: '拜访商务合作',
-				allowPer: '大笼包、奶茶'
-			},
+			person: {},
 			imgSrc: '',
 			isNopass: false, //不通过状态显示内容
+			isQrcode: false,
 			showUpload: false, //查看二维码详情
-			showQrcode: false //解决qrcode生成之前img无地址的尴尬
+			showQrcode: false, //解决qrcode生成之前img无地址的尴尬
+			qrcodeHtml: '' //二维码内容
 		}
 	},
-	computed: {},
-	created() {},
+	created() {
+		this.getDetail()
+	},
 	mounted() {
-		if (this.$route.query.id == 2) {
-			//待审核状态
-			document.title = '待审核'
-			this.isNopass = true
-		} else {
-			this.qrcode().then(() => {
-				let imgSrc = this.$refs.qrcode.getElementsByTagName('img')[0]
-				this.imgSrc = imgSrc.src
+		this.$nextTick(() => {
+			let status = this.$route.query.status
+			if (status == '5') {
+				//待审核状态
+				document.title = '待审核'
+				this.isNopass = true
+				this.isQrcode = false
+			} else if (status == '4') {
+				document.title = '待审核'
+				this.isQrcode = false
+			} else {
+				this.isQrcode = true
 				this.showQrcode = true
-			})
-		}
+			}
+		})
 	},
 	methods: {
-		Iknowe() {},
-		Ireload() {},
+		//获取详情
+		getDetail() {
+			this.$ajax.get('Staff/GetVisitInfo', { VisitId: this.$route.query.visitid }).then(res => {
+				this.person = res[0] || {}
+				this.person.visitorssex == 0 ? (this.person.visitorssex = '男') : (this.person.visitorssex = '女')
+				this.qrcodeHtml = res[0].bookingno || ''
+				this.qrcode(this.qrcodeHtml).then(() => {
+					let imgSrc = this.$refs.qrcode.getElementsByTagName('img')[0]
+					this.imgSrc = imgSrc.src
+				})
+			})
+		},
+		//审核方法
+		updateStatus(v) {
+			this.$ajax.get('Staff/UpdateAudit', { VisitId: this.$route.query.visitid, AuditRemark: this.person.remark }).then(res => {})
+		},
 		qrcode() {
 			let p = new Promise((resolve, reject) => {
 				new QRCode('qrcode', {
 					width: 200,
 					height: 200,
-					text: 'https://www.baidu.com',
+					text: this.qrcodeHtml,
 					colorDark: '#000',
 					colorLight: '#fff'
 				})

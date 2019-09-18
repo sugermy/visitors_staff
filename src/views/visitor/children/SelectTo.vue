@@ -17,7 +17,21 @@ export default {
 	methods: {
 		//选择绑定信息
 		infoBind(v) {
-			v == 1 ? this.$router.push({ path: 'BookForm' }) : this.$router.push({ path: 'VisitorCenter' })
+			v == 1
+				? this.$router.push({
+						path: 'BookForm',
+						query: {
+							OpenID: this.$route.query.OpenID,
+							VisitorsId: this.$route.query.VisitorsId
+						}
+				  })
+				: this.$router.push({
+						path: 'VisitorCenter',
+						query: {
+							OpenID: this.$route.query.OpenID,
+							VisitorsId: this.$route.query.VisitorsId
+						}
+				  })
 		}
 	}
 }

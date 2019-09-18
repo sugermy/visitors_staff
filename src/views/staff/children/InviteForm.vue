@@ -14,7 +14,7 @@
       </van-cell-group>
       <van-cell-group class="info-main">
         <van-field v-model="person.VisitorsUnit" clearable label="单位" ref="VisitorsUnit" @click="focusEvent('VisitorsUnit')" placeholder="请输入访客的单位" input-align="right" />
-        <van-field v-model="person.PlateNumber" type="tel" clearable label="车牌号" ref="PlateNumber" @click="focusEvent('PlateNumber')" placeholder="请输入访客的车牌号（选填）"
+        <van-field v-model="person.PlateNumber" type="text" clearable label="车牌号" ref="PlateNumber" @click="focusEvent('PlateNumber')" placeholder="请输入访客的车牌号（选填）"
           input-align="right" />
       </van-cell-group>
       <van-cell-group class="info-main">
@@ -171,6 +171,12 @@ export default {
 		},
 		//确认提交
 		actionGo() {
+			if (this.$refs) {
+				Object.keys(this.$refs).forEach(el => {
+					this.$refs[el].blur()
+				})
+			}
+			window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
 			let count = 0
 			Object.keys(this.person).forEach(el => {
 				if (this.person[el] == '') {
@@ -195,9 +201,8 @@ export default {
 							loadingType: 'spinner',
 							duration: 0 //0不会自动关闭  调用Toast.clear()关闭
 						})
-						this.$ajax.get('Staff/SaveInvitation', { Base_VisitInfo: params }).then(res => {
+						this.$ajax.get('Staff/SaveInvitation', params).then(res => {
 							this.toast.clear()
-							console.log(res)
 							this.bindStatusShow = true
 							if (res.Code == '1') {
 								this.bindStatus = true
@@ -222,6 +227,7 @@ export default {
 		//我知道了
 		Iknowe() {
 			this.bindStatusShow = false
+			this.$router.go(-1)
 		},
 		//重新绑定
 		Ireload() {

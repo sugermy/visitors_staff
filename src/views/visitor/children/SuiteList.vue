@@ -4,16 +4,17 @@
       <div v-for="(item,index) in suitList" :key="index" class="list-book">
         <van-checkbox class="each-check" checked-color="#637BFF" v-model="item.checked"></van-checkbox>
         <div class="each-main">
-          <h3 class="each-name">{{item.name}}</h3>
+          <h3 class="each-name">{{item.visitorsname}}</h3>
           <div class="each-body">
-            <p>电话：{{item.phone}}</p>
-            <p>单位：{{item.work}}</p>
+            <p>电话：{{item.visitorsphone}}</p>
+            <p>单位：{{item.visitorsunit}}</p>
           </div>
         </div>
       </div>
     </div>
     <div class="page-foot">
       <van-button type="info" size="normal" color="#637BFF" block @click="addPerson">新增随访</van-button>
+      <van-button type="info" size="normal" plain color="#637BFF" block @click="choosePer">确定返回上一步</van-button>
     </div>
   </div>
 </template>
@@ -21,23 +22,54 @@
 export default {
 	data() {
 		return {
-			checked: false,
-			suitList: [
-				{ name: '张满意1', phone: '18520838663', work: '深圳市道控集团', checked: false },
-				{ name: '张满意2', phone: '18520838663', work: '深圳市道控集团', checked: false },
-				{ name: '张满意3', phone: '18520838663', work: '深圳市道控集团', checked: true }
-			]
+			suitList: []
 		}
 	},
+	created() {
+		this.getList()
+		console.log(this.$store.state.suitelist)
+		// if (this.$store.state.suitelist.length > 0) {
+		// }
+	},
 	methods: {
+		//获取随访列表
+		getList() {
+			this.$ajax.get('Visitor/GetVisitorInfo', { VisitorsId: this.$route.query.VisitorsId }).then(res => {
+				let data = res || []
+				let storeData = JSON.parse(JSON.stringify(this.$store.state.suitelist))
+				data.map(el => {
+					if (storeData.length > 0) {
+						storeData.forEach(kl => {
+							if (kl.visitorsid == el.visitorsid) {
+								el.checked = true
+							}
+						})
+					} else {
+						el.checked = false
+					}
+					return el
+				})
+				this.suitList = data
+			})
+		},
+		//新增随访人员
 		addPerson() {
 			this.$router.push({
-        path: 'VisitorModify',
-        query:{
-          from:'BookNew',
-					type:'suite'
-        }
+				path: 'Follow',
+				query: {
+					type: 'new',
+					OpenID: this.$route.query.OpenID,
+					VisitorsId: this.$route.query.VisitorsId
+				}
 			})
+		},
+		//确认选择返回上一步
+		choosePer() {
+			let postData = this.suitList.filter(el => el.checked == true)
+			// localStorage.setItem('checkData', JSON.stringify(postData))
+			// this.$router.go(-1)
+			this.$store.dispatch('commitSuite', postData)
+			this.$router.go(-1)
 		}
 	}
 }
@@ -85,6 +117,7 @@ export default {
 			width: 60%;
 			margin: 0 auto;
 			border-radius: 2rem;
+			margin-bottom: 1rem;
 		}
 	}
 }

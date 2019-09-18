@@ -2,33 +2,34 @@
   <div class="page">
     <van-tabs v-model="active" animated color="#637BFF" line-width="30px">
       <van-tab title="预约信息">
-        <div class="page-main">
-          <div v-for="(item,index) in 6" :key="index" class="list-book" @click="enterDetail(index)">
-            <h3 class="each-name">小笼包</h3>
+        <div class="page-main" v-if="visitiList.length>0">
+          <div v-for="(item,index) in visitiList" :key="index" class="list-book" @click="enterDetail(item.visitid,item.status)">
+            <h3 class="each-name">{{item.visitorsname}}</h3>
             <div class="each-body">
               <div class="each-l">
-                <p>电话：17620481899</p>
-                <p>来访事由：商务合作</p>
+                <p>电话：{{item.visitorsphone}}</p>
+                <p>来访事由：{{item.visitreason}}</p>
               </div>
-              <img class="each-r" :src="require(`../../../assets/status${item}.png`)" />
+              <img class="each-r" :src="require(`../../../assets/status${item.status}.png`)" />
             </div>
           </div>
         </div>
+        <div class="page-no" v-if="visitiList.length==0">暂无预约信息</div>
       </van-tab>
       <van-tab title="个人信息">
         <div class="page-main">
           <div class="list-info">
-            <h3 class="each-name" @click="modifyAction">小笼包
-              <i class="edit-i"></i>
+            <h3 class="each-name" @click="modifyAction">{{personalInfo.realname}}
+              <!-- <i class="edit-i"></i> -->
             </h3>
             <div class="each-body">
               <p>
                 <span>电话</span>
-                <span>17620481899</span>
+                <span>{{personalInfo.mobile}}</span>
               </p>
               <p>
                 <span>单位</span>
-                <span>深圳市道控集团</span>
+                <span>{{personalInfo.fullname}}</span>
               </p>
             </div>
             <img class="card" src="../../../assets/card.png">
@@ -42,25 +43,44 @@
 export default {
 	data() {
 		return {
-			active: 0
+			active: 0,
+			visitiList: [], //预约列表
+			personalInfo: {} //个人信息
 		}
 	},
+	created() {
+		this.getList()
+		this.getInfo()
+	},
 	methods: {
+		//获取预约信息
+		getList() {
+			this.$ajax.get('Staff/GetReservation', { UserId: this.$route.query.UserID }).then(res => {
+				this.visitiList = res || []
+			})
+		},
+		//获取个人信息
+		getInfo() {
+			this.$ajax.get('Staff/GetPersonal', { UserId: this.$route.query.UserID }).then(res => {
+				this.personalInfo = res[0] || {}
+			})
+		},
 		//进入详情
-		enterDetail(id) {
+		enterDetail(visitid, status) {
 			this.$router.push({
 				path: 'StaffDetail',
 				query: {
-					id: id
+					visitid: visitid,
+					status: status
 				}
 			})
 		},
 		//修改个人信息
 		modifyAction() {
-			this.$router.push({
-				path: 'StaffModify',
-				id: '1'
-			})
+			// this.$router.push({
+			// 	path: 'StaffModify',
+			// 	id: '1'
+			// })
 		}
 	}
 }
@@ -183,6 +203,10 @@ export default {
 				height: 3rem;
 			}
 		}
+	}
+	.page-no {
+		text-align: center;
+		margin-top: 10%;
 	}
 }
 </style>

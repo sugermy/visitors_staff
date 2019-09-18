@@ -9,7 +9,7 @@ import './style/common.less';
 import Ajax from "./utils/ajax";
 import { Toast } from 'vant'
 // 实例化AJAX
-const BASEURL = "http://192.168.33.237:8011/";
+const BASEURL = window.SYSTEM_CONFIG.webServer;
 
 Vue.prototype.$ajax = new Ajax(BASEURL);
 Vue.prototype.toast = Toast;

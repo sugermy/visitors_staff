@@ -1,20 +1,21 @@
 <template>
   <div class="page con">
-    <div class="page-header">请填写您的信息</div>
+    <div class="page-header">请填写随访人员的信息</div>
     <div class="page-main">
       <van-cell-group class="info-main info-one">
-        <van-field v-model="person.VisitorsName" clearable label="姓名" ref="VisitorsName" placeholder="请输入您的姓名" @click="focusEvent('VisitorsName')" @blur="checkVal(0)"
+        <van-field v-model="person.FoolowName" clearable label="姓名" ref="FoolowName" placeholder="请输入姓名" @click="focusEvent('FoolowName')" @blur="checkVal(0)"
           input-align="right" />
-        <van-field v-model="person.VisitorsPhone" type="tel" clearable label="手机号" ref="VisitorsPhone" placeholder="请输入您的手机号" @click="focusEvent('VisitorsPhone')"
+        <van-field v-model="person.FoolowVisitorsPhone" type="tel" clearable label="手机号" ref="FoolowVisitorsPhone" placeholder="请输入手机号" @click="focusEvent('FoolowVisitorsPhone')"
           @blur="checkVal(1)" input-align="right" />
-        <van-field v-model="person.VisitorsSex" type="text" label="性别" readonly is-link input-align="right" @click="chooseSex" />
+        <van-field v-model="person.FoolowSex" type="text" label="性别" readonly is-link input-align="right" @click="chooseSex" />
         <van-action-sheet v-model="genderVisible" cancel-text="取消" :actions="actions" @select="onSelect" />
-        <van-field v-model="person.VisitorsIDCard" type="tel" ref="VisitorsIDCard" clearable label="身份证号" @click="focusEvent('VisitorsIDCard')" @blur="checkVal(2)"
-          placeholder="请输入您的身份证号" input-align="right" />
+        <van-field v-model="person.FoolowIDCard" type="tel" ref="FoolowIDCard" clearable label="身份证号" @click="focusEvent('FoolowIDCard')" @blur="checkVal(2)" placeholder="请输入身份证号"
+          input-align="right" />
       </van-cell-group>
       <van-cell-group class="info-main info-two">
-        <van-field v-model="person.VisitorsUnit" clearable label="单位" ref="address" @click="focusEvent('address')" placeholder="请输入您的单位" input-align="right" />
-        <van-field v-model="person.PlateNumber" type="tel" clearable label="车牌号" ref="carId" @click="focusEvent('carId')" placeholder="请输入您的车牌号（选填）" input-align="right" />
+        <van-field v-model="person.FoolowUnit" clearable label="单位" ref="FoolowUnit" @click="focusEvent('FoolowUnit')" placeholder="请输入单位" input-align="right" />
+        <van-field v-model="person.FoolowCarNumber" type="tel" clearable label="车牌号" ref="FoolowCarNumber" @click="focusEvent('FoolowCarNumber')" placeholder="请输入车牌号（选填）"
+          input-align="right" />
         <div class="van-cell van-field">
           <div class="van-cell__title van-field__label"><span>照片</span></div>
           <div class="van-cell__value">
@@ -28,13 +29,6 @@
     <div class="toast-info" v-show="nopass">
       <i class="toast-i"></i><span class="toast-s">{{notxt}}</span>
     </div>
-    <van-popup v-model="bindStatusShow" class="popup-status" :close-on-click-overlay="false">
-      <img :src="bindStatus?imgSrcSuc:imgSrcLose" class="popup-i">
-      <div class="popup-t">
-        <span class="bind-btn bind-suc" v-show="bindStatus" @click="Iknowe">我知道了</span>
-        <span class="bind-btn bind-lose" v-show="!bindStatus" @click="Ireload">重新绑定</span>
-      </div>
-    </van-popup>
     <div class="page-foot">
       <van-button type="info" size="normal" block @click="actionGo">确定</van-button>
     </div>
@@ -45,18 +39,15 @@ export default {
 	data() {
 		return {
 			person: {
-				VisitorsSex: '男',
-				VisitorsImg: ''
+				FoolowSex: '男',
+				FoolowImg: ''
 			},
 			nopass: false,
-			notxt: '请填写完整您的信息',
+			notxt: '请填写完整提交信息',
 			fileList: [],
 			genderVisible: false,
-			imgSrcSuc: require('../../../assets/bind_suc.png'),
-			imgSrcLose: require('../../../assets/bind_lose.png'),
-			bindStatusShow: false,
-			bindStatus: false,
-			actions: [{ name: '男', value: 1 }, { name: '女', value: 2 }]
+			actions: [{ name: '男', value: 1 }, { name: '女', value: 2 }],
+			loading: true
 		}
 	},
 	created() {},
@@ -69,11 +60,11 @@ export default {
 		//表单失焦事件
 		checkVal(v) {
 			if (v == 0) {
-				if (this.person.VisitorsName == '') {
+				if (this.person.FoolowName == '') {
 					return
 				}
 			} else if (v == 1) {
-				if (this.person.VisitorsPhone == '') {
+				if (this.person.FoolowVisitorsPhone == '') {
 					return
 				}
 				if (!this.checkPhone()) {
@@ -81,7 +72,7 @@ export default {
 					this.notxt = '手机号格式不正确'
 				}
 			} else {
-				if (this.person.VisitorsIDCard == '') {
+				if (this.person.FoolowIDCard == '') {
 					return
 				}
 				if (!this.checkIdCard()) {
@@ -98,16 +89,17 @@ export default {
 		onSelect(item) {
 			// 点击选项时默认不会关闭菜单，可以手动关闭
 			this.genderVisible = false
-			this.person.VisitorsSex = item.name
+			this.person.FoolowSex = item.name
 		},
 		//图片上传
 		afterRead(file) {
 			//自动转base64
-			this.person.VisitorsImg = file.content.split('base64,')[1]
+			this.person.FoolowImg = file.content.split('base64,')[1]
+			this.$toast('上传成功')
 		},
 		//删除图片
 		deletPhoto() {
-			this.person.VisitorsImg = ''
+			this.person.FoolowImg = ''
 		},
 		//确认提交
 		actionGo() {
@@ -131,42 +123,47 @@ export default {
 				}
 				this.nopass = false
 				let params = { OpenID: this.$route.query.OpenID, ...this.person }
-				params.VisitorsSex == '男' ? (params.VisitorsSex = 1) : (params.VisitorsSex = 0)
-				this.$ajax.get('Home/bindVisitor', params).then(res => {
-					this.bindStatusShow = true
-					if (res.Code == '1') {
-						this.bindStatus = true
-					} else {
-						this.toast(res.Message)
-						this.bindStatus = false
-					}
-				})
+				params.FoolowSex == '男' ? (params.FoolowSex = 1) : (params.FoolowSex = 0)
+				params.MainVisitors = this.$route.query.VisitorsId
+				//新增成功or失败
+				if (this.loading) {
+					this.loading = false
+					this.$ajax
+						.post('Visitor/addFollowVisit', {}, params)
+						.then(res => {
+							if (!res.Code) {
+								this.$toast('添加成功')
+								let suitePost = JSON.parse(JSON.stringify(this.$store.state.suitelist))
+								suitePost.push(res[0])
+								this.$store.dispatch('commitSuite', suitePost)
+								let _this = this
+								setTimeout(() => {
+									_this.$router.push({
+										path: 'BookForm',
+										query: {
+											OpenID: _this.$route.query.OpenID,
+											VisitorsId: _this.$route.query.VisitorsId
+										}
+									})
+								}, 2000)
+							} else {
+								this.$toast(res.Message)
+							}
+							this.loading = true
+						})
+						.catch(err => {
+							this.loading = true
+						})
+				}
 			} else {
 				this.nopass = true
-				this.notxt = '请填写完整您的信息'
+				this.notxt = '请填写完整提交信息'
 			}
-		},
-		//我知道了
-		Iknowe() {
-			this.bindStatusShow = false
-			this.$ajax.get('Home/StatrtEnter', {}).then(res => {
-				this.$router.push({
-					path: '/VisitorIndex',
-					query: {
-						OpenID: this.$route.query.OpenID,
-						VisitorsId: res.VisitorsId
-					}
-				})
-			})
-		},
-		//重新绑定
-		Ireload() {
-			this.bindStatusShow = false
 		},
 		//验证手机号
 		checkPhone() {
 			let telStr = /^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$/
-			if (!telStr.test(this.person.VisitorsPhone)) {
+			if (!telStr.test(this.person.FoolowVisitorsPhone)) {
 				return false
 			} else {
 				return true
@@ -175,7 +172,7 @@ export default {
 		//验证身份证号
 		checkIdCard() {
 			let idStr = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/
-			if (!idStr.test(this.person.VisitorsIDCard)) {
+			if (!idStr.test(this.person.FoolowIDCard)) {
 				return false
 			} else {
 				return true
@@ -230,40 +227,6 @@ export default {
 			width: 60%;
 			margin: 0 auto;
 			border-radius: 2rem;
-		}
-	}
-	.popup-status {
-		width: 70vw;
-		height: 296px;
-		border-radius: 10px;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		align-items: center;
-		.popup-i {
-			width: 100%;
-			max-height: 196px;
-		}
-		.popup-t {
-			height: calc(100% - 190px);
-			text-align: center;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			.bind-btn {
-				padding: 1rem 4rem;
-				color: #fff;
-				font-weight: blod;
-				font-size: 1.6rem;
-				border-radius: 2rem;
-			}
-			.bind-suc {
-				background: rgba(99, 123, 255, 1);
-			}
-			.bind-lose {
-				background: rgba(255, 90, 90, 1);
-			}
 		}
 	}
 }

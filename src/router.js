@@ -22,6 +22,7 @@ const VisitorCenter = () => import('./views/visitor/children/VisitorCenter.vue')
 const VisitorDetail = () => import('./views/visitor/children/VisitorDetail.vue');
 const SuiteList = () => import('./views/visitor/children/SuiteList.vue');//随访列表
 const VisitorModify = () => import('./views/visitor/children/VisitorModify.vue');//信息修改
+const Follow = () => import('./views/visitor/children/Follow.vue');//新增随访
 const BeInvited = () => import('./views/visitor/children/BeInvited.vue');//信息修改
 Vue.use(Router);
 
@@ -151,9 +152,20 @@ export default new Router({
           }
         },
         {
+          path: 'Follow',
+          name: 'Follow',
+          component: Follow,
+          meta: {
+            title: '随访信息'
+          }
+        },
+        {
           path: 'VisitorModify',
           name: 'VisitorModify',
           component: VisitorModify,
+          meta: {
+            title: '访客信息'
+          }
         },
         {
           path: 'BeInvited',

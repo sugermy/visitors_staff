@@ -50,17 +50,16 @@ export default {
 		},
 		//表单失焦事件
 		checkVal(v) {
-			if (v == 0) {
-			} else if (v == 1) {
+			if (v == 1) {
 				if (!this.checkPhone()) {
 					this.nopass = true
 					this.notxt = '手机号格式不正确'
 				}
-			} else {
 			}
 		},
 		//确认提交
 		actionGo() {
+			window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
 			let count = 0
 			Object.keys(this.person).forEach(el => {
 				if (this.person[el] == '') {
@@ -70,7 +69,6 @@ export default {
 			if (count == 0) {
 				if (this.checkPhone()) {
 					this.nopass = false
-					// this.bindStatusShow = true
 					let params = { OpenID: this.$route.query.OpenID, ...this.person }
 					this.$ajax.get('Home/bindStaff', params).then(res => {
 						this.bindStatusShow = true

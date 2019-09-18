@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { Promise } from 'q';
 import { Toast } from 'vant';
+import qs from "qs";
+
 export default class Ajax {
   /**
    * @param { String } baseURL        基础请求地址
@@ -44,6 +46,11 @@ export default class Ajax {
     return this._axios({ method: 'get', url, params });
   }
   post (url, params = {}, data = {}) {
-    return this._axios({ method: 'post', url, params, data });
+    data = qs.stringify(data);
+    return this._axios({
+      method: 'post', headers: {
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+      }, url, params, data
+    });
   }
 }

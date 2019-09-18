@@ -21,12 +21,15 @@
         </div>
       </van-cell-group>
       <van-cell-group class="info-main">
-        <van-field v-model="person.username" clearable label="被访员工姓名" ref="username" placeholder="请输入访客的姓名" @click="focusEvent('username')" input-align="right" />
-        <van-field v-model="person.phone" type="tel" clearable label="被访员工手机" ref="tel" placeholder="请输入访客的手机号" @click="focusEvent('tel')" input-align="right" />
-        <van-field v-model="person.idCard" type="tel" ref="idcard" clearable label="被访员工工号" @click="focusEvent('idcard')" placeholder="请输入被访员工工号" input-align="right" />
+        <van-field v-model="person.RealName" clearable label="被访员工姓名" ref="RealName" placeholder="请输入访客的姓名" @click="focusEvent('RealName')" input-align="right" />
+        <van-field v-model="person.Mobile" type="tel" clearable label="被访员工手机" @blur="checkVal(1)" ref="Mobile" placeholder="请输入访客的手机号" @click="focusEvent('Mobile')"
+          input-align="right" />
+        <van-field v-model="person.Code" type="text" ref="Code" clearable label="被访员工工号" @click="focusEvent('Code')" placeholder="请输入被访员工工号" input-align="right" />
       </van-cell-group>
       <van-cell-group class="info-main">
-        <van-field v-model="person.remark" type="textarea" clearable label="来访事由" autosize ref="remark" @click="focusEvent('remark')" placeholder="请输入来访事由说明" input-align="right" />
+        <van-field v-model="person.VisitReason" type="textarea" clearable label="来访事由" autosize ref="VisitReason" @click="focusEvent('VisitReason')" placeholder="请输入来访事由说明"
+          input-align="right" />
+        <van-field v-model="person.SuiteList" type="textarea" clearable label="随访人员" readonly autosize ref="remark1" placeholder="请添加随访人员" input-align="right" />
       </van-cell-group>
       <van-popup v-model="showStartPicker" position="bottom">
         <van-datetime-picker :formatter="filterData" v-model="person.startDate" @confirm="chooseDate(1)" @cancel="chooseDate(1)" type="datetime" />
@@ -36,7 +39,7 @@
       </van-popup>
     </div>
     <div class="toast-info" v-show="nopass">
-      <i class="toast-i"></i><span class="toast-s">请填写完整预约信息</span>
+      <i class="toast-i"></i><span class="toast-s">{{notxt}}</span>
     </div>
     <div class="page-foot">
       <van-button type="info" size="normal" block color="#637BFF" @click="actionGo">确定</van-button>
@@ -52,17 +55,17 @@
   </div>
 </template>
 <script>
-import { Toast } from 'vant'
 export default {
+	name: 'BookForm',
 	data() {
 		return {
 			person: {
-				username: '',
-				phone: '',
-				idCard: '',
+				RealName: '',
+				Mobile: '',
+				Code: '',
 				startDate: new Date(),
 				endDate: new Date(),
-				remark: ''
+				VisitReason: ''
 			},
 			nopass: false,
 			genderVisible: false,
@@ -71,7 +74,8 @@ export default {
 			bindStatusShow: false, //绑定弹窗显示
 			bindStatus: false, //绑定状态
 			imgSrcSuc: require('../../../assets/book_suc.png'),
-			imgSrcLose: require('../../../assets/book_lose.png')
+			imgSrcLose: require('../../../assets/book_lose.png'),
+			notxt: '请填写完整预约信息'
 		}
 	},
 	computed: {
@@ -85,7 +89,11 @@ export default {
 			return this.person.startDate
 		}
 	},
-	created() {},
+	//当前路由被缓存只有第一次加载会进入此周期
+	created() {
+		console.log(this.$store.state.suitelist)
+		this.person.SuiteList = this.$store.state.suitelist.map(el => el.visitorsname).join('、')
+	},
 	methods: {
 		filterData(type, value) {
 			if (type === 'year') {
@@ -105,6 +113,15 @@ export default {
 		focusEvent(name) {
 			this.$refs[name].focus()
 			this.nopass = false
+		},
+		//表单失焦事件
+		checkVal(v) {
+			if (v == 1) {
+				if (!this.checkPhone()) {
+					this.nopass = true
+					this.notxt = '手机号格式不正确'
+				}
+			}
 		},
 		//时间选择
 		dataPicker(v) {
@@ -126,26 +143,34 @@ export default {
 		//确认提交
 		actionGo() {
 			let count = 0
-			console.log(this.person)
 			Object.keys(this.person).forEach(el => {
-				if (this.person[el] == '') {
-					count++
+				if (el != 'SuiteList') {
+					if (this.person[el] == '') {
+						count++
+					}
 				}
 			})
 			if (count == 0) {
-				this.nopass = false
-				Toast.loading({
-					mask: true,
-					message: '正在发送...',
-					loadingType: 'spinner',
-					duration: 3000 //0不会自动关闭  调用Toast.clear()关闭
-				})
-				let _this = this
-				setTimeout(function() {
-					_this.bindStatusShow = true
-				}, 3000)
+				if (this.checkPhone()) {
+					this.nopass = false
+					this.toast.loading({
+						mask: true,
+						message: '正在发送...',
+						loadingType: 'spinner',
+						duration: 0 //0不会自动关闭  调用Toast.clear()关闭
+					})
+					let _this = this
+					setTimeout(function() {
+						_this.bindStatusShow = true
+						_this.toast.clear()
+					}, 3000)
+				} else {
+					this.nopass = true
+					this.notxt = '手机号格式不正确'
+				}
 			} else {
 				this.nopass = true
+				this.notxt = '请填写完整预约信息'
 			}
 		},
 		//我知道了
@@ -159,8 +184,21 @@ export default {
 		//添加随访
 		addPerson() {
 			this.$router.push({
-				path: 'SuiteList'
+				path: 'SuiteList',
+				query: {
+					VisitorsId: this.$route.query.VisitorsId,
+					OpenID: this.$route.query.OpenID
+				}
 			})
+		},
+		//验证手机号
+		checkPhone() {
+			let telStr = /^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$/
+			if (!telStr.test(this.person.Mobile)) {
+				return false
+			} else {
+				return true
+			}
 		}
 	},
 	watch: {

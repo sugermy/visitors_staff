@@ -51,9 +51,8 @@ export default {
 	created() {
 		if (this.$route.query.type == 'visitor') {
 			this.title = '访客'
-			document.title = '访客信息'
 		} else {
-			document.title = '随访信息'
+			console.log(1)
 		}
 	},
 	methods: {

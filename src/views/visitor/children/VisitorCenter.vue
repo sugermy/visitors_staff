@@ -3,35 +3,35 @@
     <van-tabs v-model="activeTab" animated color="#637BFF" line-width="30px">
       <van-tab title="预约信息">
         <div class="page-main">
-          <div v-for="(item,index) in 6" :key="index" class="list-book" @click="enterDetail(index)">
-            <h3 class="each-name">小笼包{{index==2?'（受邀页面）':'（查看页面）'}}</h3>
+          <div v-for="(item,index) in booklist" :key="index" class="list-book" @click="enterDetail(index)">
+            <h3 class="each-name">{{item.visitorsname}}</h3>
             <div class="each-body">
               <div class="each-l">
-                <p>电话：17620481899</p>
-                <p>来访事由：商务合作</p>
+                <p>电话：{{item.visitorsphone}}</p>
+                <p>来访事由：{{item.visitreason}}</p>
               </div>
-              <img class="each-r" :src="require(`../../../assets/status${item}.png`)" />
+              <img class="each-r" :src="require(`../../../assets/status${item.status}.png`)" />
             </div>
           </div>
         </div>
       </van-tab>
       <van-tab title="访客信息">
         <div class="page-main">
-          <div class="list-info" v-for="(item,index) in 5" :key="index">
-            <h3 class="each-name" @click="enterModify(index)">小笼包
+          <div class="list-info" v-for="(item,index) in suitelist" :key="index">
+            <h3 class="each-name" @click="enterModify(item.visitorsid)">{{item.visitorsname}}
               <i class="edit-i"></i>
             </h3>
             <div class="each-body">
               <p>
                 <span>电话</span>
-                <span>17620481899</span>
+                <span>{{item.visitorsphone}}</span>
               </p>
               <p>
                 <span>单位</span>
-                <span>深圳市道控集团</span>
+                <span>{{item.visitorsunit}}</span>
               </p>
             </div>
-            <img class="card" :src="index==0?require('../../../assets/visitor.png'):require('../../../assets/suite.png')">
+            <img class="card" :src="item.visitorstype==0?require('../../../assets/visitor.png'):require('../../../assets/suite.png')">
           </div>
         </div>
         <div class="page-foot">
@@ -45,15 +45,30 @@
 export default {
 	data() {
 		return {
-			activeTab: 0
+			activeTab: 0,
+			booklist: [],
+			suitelist: []
 		}
 	},
 	created() {
 		if (this.$route.query.activeTab) {
 			this.activeTab = this.$route.query.activeTab
 		}
+		this.getList()
+		this.getSuite()
 	},
 	methods: {
+		//获取列表信息
+		getList() {
+			this.$ajax.get('Visitor/GetReservation', { VisitorsId: this.$route.query.VisitorsId }).then(res => {
+				this.booklist = res || []
+			})
+		},
+		getSuite() {
+			this.$ajax.get('Visitor/GetVisitorInfo', { VisitorsId: this.$route.query.VisitorsId }).then(res => {
+				this.suitelist = res || []
+			})
+		},
 		//进入详情
 		enterDetail(id) {
 			if (id == 2) {
@@ -79,17 +94,18 @@ export default {
 				query: {
 					from: 'CenterEdit',
 					type: id == 0 ? 'visitor' : 'suite',
-					activeTab: this.activeTab
+					activeTab: this.activeTab,
+					OpenID: this.$route.query.OpenID,
+					VisitorsId: this.$route.query.VisitorsId
 				}
 			})
 		},
 		//新增随访
 		addPerson() {
 			this.$router.push({
-				path: 'VisitorModify',
+				path: 'Follow',
 				query: {
-					from: 'CenterNew',
-					type: 'suite',
+					from: 'center',
 					activeTab: this.activeTab
 				}
 			})
@@ -186,7 +202,7 @@ export default {
 				p {
 					line-height: 2rem;
 					padding: 1rem 0;
-					margin: 0 1.6rem;
+					margin: 0 2.5rem 0 1.6rem;
 					display: flex;
 					justify-content: space-between;
 					align-items: center;
@@ -217,12 +233,12 @@ export default {
 		}
 	}
 	.page-foot {
-		margin-top: 2rem;
+		margin-top: 2.5rem;
 		.van-button {
-			width: 60%;
+			width: 80%;
 			margin: 0 auto;
 			border-radius: 2rem;
-			margin-bottom: 1rem;
+			margin-bottom: 1.5rem;
 		}
 	}
 }

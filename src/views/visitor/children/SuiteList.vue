@@ -57,7 +57,7 @@ export default {
 			this.$router.push({
 				path: 'Follow',
 				query: {
-					type: 'new',
+					from: 'book',
 					OpenID: this.$route.query.OpenID,
 					VisitorsId: this.$route.query.VisitorsId
 				}
@@ -112,12 +112,12 @@ export default {
 		}
 	}
 	.page-foot {
-		margin-top: 2rem;
+		margin-top: 2.5rem;
 		.van-button {
-			width: 60%;
+			width: calc((100% - 3rem) * 0.8);
 			margin: 0 auto;
 			border-radius: 2rem;
-			margin-bottom: 1rem;
+			margin-bottom: 1.5rem;
 		}
 	}
 }

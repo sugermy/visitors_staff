@@ -32,10 +32,10 @@
         <van-field v-model="person.SuiteList" type="textarea" clearable label="随访人员" readonly autosize ref="remark1" placeholder="请添加随访人员" input-align="right" />
       </van-cell-group>
       <van-popup v-model="showStartPicker" position="bottom">
-        <van-datetime-picker :formatter="filterData" v-model="person.startDate" @confirm="chooseDate(1)" @cancel="chooseDate(1)" type="datetime" />
+        <van-datetime-picker :formatter="filterData" v-model="person.startDate" @change="changeData" @confirm="chooseDate(1)" @cancel="chooseDate(1)" type="datetime" />
       </van-popup>
       <van-popup v-model="showEndPicker" position="bottom">
-        <van-datetime-picker v-model="person.endDate" :min-date="person.startDate" @confirm="chooseDate(2)" @cancel="chooseDate(2)" type="datetime" />
+        <van-datetime-picker v-model="person.endDate" :formatter="filterData" :min-date="person.startDate" @confirm="chooseDate(2)" @cancel="chooseDate(2)" type="datetime" />
       </van-popup>
     </div>
     <div class="toast-info" v-show="nopass">
@@ -75,7 +75,8 @@ export default {
 			bindStatus: false, //绑定状态
 			imgSrcSuc: require('../../../assets/book_suc.png'),
 			imgSrcLose: require('../../../assets/book_lose.png'),
-			notxt: '请填写完整预约信息'
+			notxt: '请填写完整预约信息',
+			canChange: true
 		}
 	},
 	computed: {
@@ -91,8 +92,15 @@ export default {
 	},
 	//当前路由被缓存只有第一次加载会进入此周期
 	created() {
-		console.log(this.$store.state.suitelist)
-		this.person.SuiteList = this.$store.state.suitelist.map(el => el.visitorsname).join('、')
+		this.$nextTick(() => {
+			if (this.$store.state.bookForm.startDate) {
+				this.canChange = false
+				this.person = this.$store.state.bookForm
+			} else {
+				this.canChange = true
+			}
+			this.person.SuiteList = this.$store.state.suitelist.map(el => el.visitorsname).join('、')
+		})
 	},
 	methods: {
 		filterData(type, value) {
@@ -122,6 +130,10 @@ export default {
 					this.notxt = '手机号格式不正确'
 				}
 			}
+		},
+		//切换时间  防止读store的赋值问题
+		changeData() {
+			this.canChange = true
 		},
 		//时间选择
 		dataPicker(v) {
@@ -160,10 +172,25 @@ export default {
 						duration: 0 //0不会自动关闭  调用Toast.clear()关闭
 					})
 					let _this = this
-					setTimeout(function() {
-						_this.bindStatusShow = true
-						_this.toast.clear()
-					}, 3000)
+					let params = { OpenID: this.$route.query.OpenID, VisitId: this.$route.query.VisitorsId, ...this.person, StartTime: this.formatSData, EndTime: this.formatEData }
+					delete params.startDate
+					delete params.endDate
+					delete params.SuiteList
+					params.FoolowID = this.$store.state.suitelist.map(el => el.visitorsid)
+					this.$ajax.post('Visitor/SubmitVisit', {}, params).then(res => {
+						this.toast.clear()
+						this.bindStatusShow = true
+						if (res.Code == '1') {
+							this.bindStatus = true
+						} else {
+							this.bindStatus = false
+							this.toast(res.Message)
+						}
+					})
+					// setTimeout(function() {
+					// 	_this.bindStatusShow = true
+					// 	_this.toast.clear()
+					// }, 3000)
 				} else {
 					this.nopass = true
 					this.notxt = '手机号格式不正确'
@@ -176,6 +203,16 @@ export default {
 		//我知道了
 		Iknowe() {
 			this.bindStatusShow = false
+			this.$store.dispatch('commitBook', {})
+			this.$ajax.get('Home/StatrtEnter', {}).then(res => {
+				this.$router.push({
+					path: '/VisitorIndex',
+					query: {
+						VisitorsId: this.$route.query.VisitorsId,
+						OpenID: this.$route.query.OpenID
+					}
+				})
+			})
 		},
 		//重新绑定
 		Ireload() {
@@ -183,6 +220,8 @@ export default {
 		},
 		//添加随访
 		addPerson() {
+			console.log(this.person)
+			this.$store.dispatch('commitBook', this.person)
 			this.$router.push({
 				path: 'SuiteList',
 				query: {
@@ -203,7 +242,9 @@ export default {
 	},
 	watch: {
 		initData(v) {
-			this.person.endDate = v
+			if (this.canChange) {
+				this.person.endDate = v
+			}
 		}
 	}
 }
@@ -252,12 +293,12 @@ export default {
 	}
 
 	.page-foot {
-		margin-top: 1.5rem;
+		margin-top: 2.5rem;
 		.van-button {
-			width: 60%;
+			width: 80%;
 			margin: 0 auto;
 			border-radius: 2rem;
-			margin-bottom: 1rem;
+			margin-bottom: 1.5rem;
 		}
 	}
 	.popup-status {

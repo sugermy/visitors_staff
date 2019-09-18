@@ -303,9 +303,9 @@ export default {
 	}
 
 	.page-foot {
-		margin-top: 1.5rem;
+		margin-top: 2.5rem;
 		.van-button {
-			width: 60%;
+			width: 80%;
 			margin: 0 auto;
 			border-radius: 2rem;
 		}

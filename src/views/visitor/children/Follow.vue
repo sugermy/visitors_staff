@@ -30,7 +30,7 @@
       <i class="toast-i"></i><span class="toast-s">{{notxt}}</span>
     </div>
     <div class="page-foot">
-      <van-button type="info" size="normal" block @click="actionGo">确定</van-button>
+      <van-button type="info" size="normal" color="#637BFF" block @click="actionGo">确定</van-button>
     </div>
   </div>
 </template>
@@ -222,9 +222,9 @@ export default {
 	}
 
 	.page-foot {
-		margin-top: 1.5rem;
+		margin-top: 2.5rem;
 		.van-button {
-			width: 60%;
+			width: 80%;
 			margin: 0 auto;
 			border-radius: 2rem;
 		}

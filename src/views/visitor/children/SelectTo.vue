@@ -13,7 +13,10 @@ export default {
 	data() {
 		return {}
 	},
-	created() {},
+	created() {
+		this.$store.dispatch('commitBook', {})
+		this.$store.dispatch('commitSuite', [])
+	},
 	methods: {
 		//选择绑定信息
 		infoBind(v) {

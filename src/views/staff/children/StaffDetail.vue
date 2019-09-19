@@ -13,12 +13,12 @@
       </van-cell-group>
       <van-cell-group class="info-main">
         <van-field v-model="person.starttime" label="来访时间" readonly input-align="right" />
-        <van-field v-model="person.endDate" label="结束时间" readonly input-align="right" />
+        <van-field v-model="person.endtime" label="结束时间" readonly input-align="right" />
         <van-field v-model="person.visitreason" type="textarea" autosize readonly label="来访事由" input-align="right" />
         <van-field v-model="person.followname" label="随访人员" readonly input-align="right" />
       </van-cell-group>
       <van-cell-group class="info-main">
-        <van-field v-model="person.remark" type="textarea" autosize label="备注" input-align="right" />
+        <van-field v-model="auditRemark" type="textarea" :readonly="remarkEdit" autosize label="备注" input-align="right" />
         <div class="van-cell van-field" v-show="isQrcode">
           <div class="van-cell__title van-field__label"><span>预约码</span></div>
           <div class="van-cell__value">
@@ -50,12 +50,14 @@ export default {
 	data() {
 		return {
 			person: {},
+			auditRemark: '',
 			imgSrc: '',
 			isNopass: false, //不通过状态显示内容
 			isQrcode: false,
 			showUpload: false, //查看二维码详情
 			showQrcode: false, //解决qrcode生成之前img无地址的尴尬
-			qrcodeHtml: '' //二维码内容
+			qrcodeHtml: '', //二维码内容
+			remarkEdit: false
 		}
 	},
 	created() {
@@ -69,12 +71,15 @@ export default {
 				document.title = '待审核'
 				this.isNopass = true
 				this.isQrcode = false
+				this.remarkEdit = false
 			} else if (status == '4') {
 				document.title = '待审核'
 				this.isQrcode = false
+				this.remarkEdit = true
 			} else {
 				this.isQrcode = true
 				this.showQrcode = true
+				this.remarkEdit = true
 			}
 		})
 	},
@@ -84,6 +89,7 @@ export default {
 			this.$ajax.get('Staff/GetVisitInfo', { VisitId: this.$route.query.visitid }).then(res => {
 				this.person = res[0] || {}
 				this.person.visitorssex == 0 ? (this.person.visitorssex = '男') : (this.person.visitorssex = '女')
+				this.auditRemark = this.person.remark
 				this.qrcodeHtml = res[0].bookingno || ''
 				this.qrcode(this.qrcodeHtml).then(() => {
 					let imgSrc = this.$refs.qrcode.getElementsByTagName('img')[0]
@@ -92,15 +98,26 @@ export default {
 			})
 		},
 		//审核方法
-		updateStatus(v) {
-			this.$ajax.get('Staff/UpdateAudit', { VisitId: this.$route.query.visitid, AuditRemark: this.person.remark }).then(res => {})
+		updateStatus(type) {
+			window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+			this.$ajax.get('Staff/UpdateAudit', { VisitId: this.$route.query.visitid, AuditState: type, AuditRemark: this.auditRemark }).then(res => {
+				if (res.Code == '1') {
+					this.toast(res.Message)
+					let _this = this
+					setTimeout(() => {
+						_this.$router.go(-1)
+					}, 1000)
+				} else {
+					this.toast(res.Message)
+				}
+			})
 		},
-		qrcode() {
+		qrcode(code) {
 			let p = new Promise((resolve, reject) => {
 				new QRCode('qrcode', {
 					width: 200,
 					height: 200,
-					text: this.qrcodeHtml,
+					text: code,
 					colorDark: '#000',
 					colorLight: '#fff'
 				})
@@ -148,7 +165,7 @@ export default {
 		align-items: center;
 		.bind-btn {
 			color: #fff;
-			width: 50%;
+			width: 80%;
 			text-align: center;
 			padding: 1rem 0;
 			font-weight: blod;

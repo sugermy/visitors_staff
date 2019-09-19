@@ -48,7 +48,7 @@
       <i class="toast-i"></i><span class="toast-s">{{notxt}}</span>
     </div>
     <div class="page-foot">
-      <van-button type="info" size="normal" block @click="actionGo">确定</van-button>
+      <van-button type="info" color="#637bff" size="normal" block @click="actionGo">确定</van-button>
     </div>
     <van-popup v-model="bindStatusShow" class="popup-status" :close-on-click-overlay="false">
       <img :src="bindStatus?imgSrcSuc:imgSrcLose" class="popup-i">
@@ -179,7 +179,7 @@ export default {
 			window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
 			let count = 0
 			Object.keys(this.person).forEach(el => {
-				if (this.person[el] == '') {
+				if (this.person[el] == '' && el != 'PlateNumber') {
 					count++
 				}
 			})
@@ -201,6 +201,7 @@ export default {
 							loadingType: 'spinner',
 							duration: 0 //0不会自动关闭  调用Toast.clear()关闭
 						})
+						params.UserID = this.$route.query.UserID
 						this.$ajax.get('Staff/SaveInvitation', params).then(res => {
 							this.toast.clear()
 							this.bindStatusShow = true

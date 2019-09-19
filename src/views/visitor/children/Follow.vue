@@ -106,7 +106,7 @@ export default {
 			window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
 			let count = 0
 			Object.keys(this.person).forEach(el => {
-				if (this.person[el] == '') {
+				if (this.person[el] == '' && el != 'FoolowCarNumber') {
 					count++
 				}
 			})
@@ -138,13 +138,17 @@ export default {
 								this.$store.dispatch('commitSuite', suitePost)
 								let _this = this
 								setTimeout(() => {
-									_this.$router.push({
-										path: 'BookForm',
-										query: {
-											OpenID: _this.$route.query.OpenID,
-											VisitorsId: _this.$route.query.VisitorsId
-										}
-									})
+									if (_this.$route.query.from == 'book') {
+										_this.$router.push({
+											path: 'BookForm',
+											query: {
+												OpenID: _this.$route.query.OpenID,
+												VisitorsId: _this.$route.query.VisitorsId
+											}
+										})
+									} else {
+										_this.$router.go(-1)
+									}
 								}, 2000)
 							} else {
 								this.$toast(res.Message)

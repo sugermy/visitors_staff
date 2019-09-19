@@ -71,7 +71,9 @@ export default {
 				path: 'StaffDetail',
 				query: {
 					visitid: visitid,
-					status: status
+					status: status,
+					UserID: this.$route.query.UserID,
+					OpenID: this.$route.query.OpenID
 				}
 			})
 		},
@@ -174,7 +176,7 @@ export default {
 				p {
 					line-height: 2rem;
 					padding: 1rem 0;
-					margin: 0 1.6rem;
+					margin: 0 2.5rem 0 1.6rem;
 					display: flex;
 					justify-content: space-between;
 					align-items: center;

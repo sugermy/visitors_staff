@@ -7,12 +7,14 @@ import FastClick from "fastclick";
 import "./style/reset.less";
 import './style/common.less';
 import Ajax from "./utils/ajax";
-import { Toast } from 'vant'
+import { Toast, Dialog } from 'vant'
+
 // 实例化AJAX
 const BASEURL = window.SYSTEM_CONFIG.webServer;
 
 Vue.prototype.$ajax = new Ajax(BASEURL);
 Vue.prototype.toast = Toast;
+Vue.prototype.dialog = Dialog;
 
 FastClick.attach(document.body);
 

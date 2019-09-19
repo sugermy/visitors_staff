@@ -220,7 +220,6 @@ export default {
 		},
 		//添加随访
 		addPerson() {
-			console.log(this.person)
 			this.$store.dispatch('commitBook', this.person)
 			this.$router.push({
 				path: 'SuiteList',

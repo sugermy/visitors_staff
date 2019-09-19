@@ -2,38 +2,45 @@
   <div class="page">
     <van-tabs v-model="activeTab" animated color="#637BFF" line-width="30px">
       <van-tab title="预约信息">
-        <div class="page-main">
-          <div v-for="(item,index) in booklist" :key="index" class="list-book" @click="enterDetail(index)">
-            <h3 class="each-name">{{item.visitorsname}}</h3>
+        <div class="page-main" v-if="booklist.length>=1">
+          <div v-for="(item,index) in booklist" :key="index" class="list-book" @click="enterDetail(item.status,item.visitid)">
+            <h3 class="each-name">{{item.realname}}</h3>
             <div class="each-body">
               <div class="each-l">
-                <p>电话：{{item.visitorsphone}}</p>
+                <p>电话：{{item.mobile}}</p>
                 <p>来访事由：{{item.visitreason}}</p>
               </div>
               <img class="each-r" :src="require(`../../../assets/status${item.status}.png`)" />
             </div>
           </div>
         </div>
+        <div class="page-no" v-if="booklist.length==0">暂无预约信息</div>
       </van-tab>
       <van-tab title="访客信息">
         <div class="page-main">
-          <div class="list-info" v-for="(item,index) in suitelist" :key="index">
-            <h3 class="each-name" @click="enterModify(item.visitorsid)">{{item.visitorsname}}
-              <i class="edit-i"></i>
-            </h3>
-            <div class="each-body">
-              <p>
-                <span>电话</span>
-                <span>{{item.visitorsphone}}</span>
-              </p>
-              <p>
-                <span>单位</span>
-                <span>{{item.visitorsunit}}</span>
-              </p>
+          <van-swipe-cell v-for="(item,index) in suitelist" :key="index" :disabled="item.visitorstype==1">
+            <div class="list-info">
+              <h3 class="each-name" @click="enterModify(item.visitorsid,item.visitorstype)">{{item.visitorsname}}
+                <i class="edit-i"></i>
+              </h3>
+              <div class="each-body">
+                <p>
+                  <span>电话</span>
+                  <span>{{item.visitorsphone}}</span>
+                </p>
+                <p>
+                  <span>单位</span>
+                  <span>{{item.visitorsunit}}</span>
+                </p>
+              </div>
+              <img class="card" :src="item.visitorstype==1?require('../../../assets/visitor.png'):require('../../../assets/suite.png')">
             </div>
-            <img class="card" :src="item.visitorstype==0?require('../../../assets/visitor.png'):require('../../../assets/suite.png')">
-          </div>
+            <template slot="right">
+              <van-button square class="swipe-cell-btn" color="#FE6464" @click="deleteSuite(item.visitorstype,item.visitorsid)" text="删除" />
+            </template>
+          </van-swipe-cell>
         </div>
+
         <div class="page-foot">
           <van-button type="info" size="normal" color="#637BFF" block @click="addPerson">新增随访</van-button>
         </div>
@@ -70,30 +77,35 @@ export default {
 			})
 		},
 		//进入详情
-		enterDetail(id) {
-			if (id == 2) {
+		enterDetail(status, id) {
+			if (status == '4') {
 				this.$router.push({
 					path: 'BeInvited',
 					query: {
-						id: id
+						personID: id,
+						OpenID: this.$route.query.OpenID,
+						VisitorsId: this.$route.query.VisitorsId
 					}
 				})
 			} else {
 				this.$router.push({
 					path: 'VisitorDetail',
 					query: {
-						id: id
+						personID: id,
+						OpenID: this.$route.query.OpenID,
+						VisitorsId: this.$route.query.VisitorsId,
+						status: status
 					}
 				})
 			}
 		},
 		//编辑
-		enterModify(id) {
+		enterModify(id, type) {
 			this.$router.push({
 				path: 'VisitorModify',
 				query: {
-					from: 'CenterEdit',
-					type: id == 0 ? 'visitor' : 'suite',
+					type: type == 1 ? 'visitor' : 'suite',
+					personID: id,
 					activeTab: this.activeTab,
 					OpenID: this.$route.query.OpenID,
 					VisitorsId: this.$route.query.VisitorsId
@@ -106,9 +118,33 @@ export default {
 				path: 'Follow',
 				query: {
 					from: 'center',
-					activeTab: this.activeTab
+					activeTab: this.activeTab,
+					OpenID: this.$route.query.OpenID,
+					VisitorsId: this.$route.query.VisitorsId
 				}
 			})
+		},
+		//删除随访
+		deleteSuite(type, id) {
+			this.dialog
+				.confirm({
+					title: '提示',
+					message: '确认删除当前随访信息吗？'
+				})
+				.then(() => {
+					// on confirm
+					this.$ajax.get('Visitor/DelVisitor', { visitorsid: id, visitorstype: type }).then(res => {
+						if (res.Code == '1') {
+							this.toast(res.Message)
+							this.getSuite()
+						} else {
+							this.toast(res.Message)
+						}
+					})
+				})
+				.catch(err => {
+					// on cancel
+				})
 		}
 	}
 }
@@ -240,6 +276,13 @@ export default {
 			border-radius: 2rem;
 			margin-bottom: 1.5rem;
 		}
+	}
+	.swipe-cell-btn {
+		height: 100%;
+	}
+	.page-no {
+		text-align: center;
+		margin-top: 10%;
 	}
 }
 </style>

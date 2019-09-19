@@ -49,7 +49,7 @@ export default {
 					}
 					return el
 				})
-				this.suitList = data
+				this.suitList = data.filter(el => el.visitorstype != 1)
 			})
 		},
 		//新增随访人员

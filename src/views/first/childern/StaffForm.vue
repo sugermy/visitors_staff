@@ -20,7 +20,7 @@
       </div>
     </van-popup>
     <div class="page-foot">
-      <van-button type="info" size="normal" block @click="actionGo">绑定</van-button>
+      <van-button type="info" size="normal" color="#637bff" block @click="actionGo">绑定</van-button>
     </div>
   </div>
 </template>

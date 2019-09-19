@@ -36,7 +36,7 @@
       </div>
     </van-popup>
     <div class="page-foot">
-      <van-button type="info" size="normal" block @click="actionGo">确定</van-button>
+      <van-button type="info" size="normal" color="#637bff" block @click="actionGo">确定</van-button>
     </div>
   </div>
 </template>
@@ -114,7 +114,7 @@ export default {
 			window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
 			let count = 0
 			Object.keys(this.person).forEach(el => {
-				if (this.person[el] == '') {
+				if (this.person[el] == '' && el != 'PlateNumber') {
 					count++
 				}
 			})
@@ -132,7 +132,7 @@ export default {
 				this.nopass = false
 				let params = { OpenID: this.$route.query.OpenID, ...this.person }
 				params.VisitorsSex == '男' ? (params.VisitorsSex = 1) : (params.VisitorsSex = 0)
-				this.$ajax.get('Home/bindVisitor', params).then(res => {
+				this.$ajax.post('Home/bindVisitor', {}, params).then(res => {
 					this.bindStatusShow = true
 					if (res.Code == '1') {
 						this.bindStatus = true

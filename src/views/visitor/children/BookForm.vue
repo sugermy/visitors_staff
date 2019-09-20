@@ -176,8 +176,12 @@ export default {
 					delete params.startDate
 					delete params.endDate
 					delete params.SuiteList
-					params.FoolowID = this.$store.state.suitelist.map(el => el.visitorsid)
-					this.$ajax.post('Visitor/SubmitVisit', {}, params).then(res => {
+					params.addPerson = this.$store.state.suitelist.map(el => {
+						return {
+							FoolowID: el.visitorsid
+						}
+					})
+					this.$ajax.post('Visitor/SubmitVisit', {}, { Bs_visit: JSON.stringify(params) }).then(res => {
 						this.toast.clear()
 						this.bindStatusShow = true
 						if (res.Code == '1') {
@@ -187,10 +191,10 @@ export default {
 							this.toast(res.Message)
 						}
 					})
-					// setTimeout(function() {
-					// 	_this.bindStatusShow = true
-					// 	_this.toast.clear()
-					// }, 3000)
+					setTimeout(function() {
+						_this.bindStatusShow = true
+						_this.toast.clear()
+					}, 3000)
 				} else {
 					this.nopass = true
 					this.notxt = '手机号格式不正确'

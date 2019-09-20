@@ -27,9 +27,6 @@ export default {
 	},
 	created() {
 		this.getList()
-		console.log(this.$store.state.suitelist)
-		// if (this.$store.state.suitelist.length > 0) {
-		// }
 	},
 	methods: {
 		//获取随访列表

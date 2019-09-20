@@ -8,7 +8,7 @@ const ALL_SERVERS = {
   },
   // 1-2. 测试服务器
   localhost: {
-    apiServer: 'http://192.168.33.237:8011/',
+    apiServer: 'http://192.168.33.237:8888/',
   },
 }
 

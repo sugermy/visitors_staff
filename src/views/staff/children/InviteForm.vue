@@ -167,7 +167,7 @@ export default {
 		onSelect(item) {
 			// 点击选项时默认不会关闭菜单，可以手动关闭
 			this.genderVisible = false
-			this.person.gender = item.name
+			this.person.VisitorsSex = item.name
 		},
 		//确认提交
 		actionGo() {

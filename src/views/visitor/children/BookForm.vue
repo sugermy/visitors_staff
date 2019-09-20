@@ -21,8 +21,8 @@
         </div>
       </van-cell-group>
       <van-cell-group class="info-main">
-        <van-field v-model="person.RealName" clearable label="被访员工姓名" ref="RealName" placeholder="请输入访客的姓名" @click="focusEvent('RealName')" input-align="right" />
-        <van-field v-model="person.Mobile" type="tel" clearable label="被访员工手机" @blur="checkVal(1)" ref="Mobile" placeholder="请输入访客的手机号" @click="focusEvent('Mobile')"
+        <van-field v-model="person.RealName" clearable label="被访员工姓名" ref="RealName" placeholder="请输入被访员工姓名" @click="focusEvent('RealName')" input-align="right" />
+        <van-field v-model="person.Mobile" type="tel" clearable label="被访员工手机" @blur="checkVal(1)" ref="Mobile" placeholder="请输入被访员工手机号" @click="focusEvent('Mobile')"
           input-align="right" />
         <van-field v-model="person.Code" type="text" ref="Code" clearable label="被访员工工号" @click="focusEvent('Code')" placeholder="请输入被访员工工号" input-align="right" />
       </van-cell-group>

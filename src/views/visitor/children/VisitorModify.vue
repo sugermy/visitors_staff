@@ -109,12 +109,12 @@ export default {
 		//图片上传
 		afterRead(file) {
 			//自动转base64
-			this.person.visitorsimg = file.content
+			this.person.visitorsimg = file.content.split('base64,')[1]
+			this.$toast('上传成功')
 		},
 		//删除图片
 		deletPhoto(file) {
-			this.person.visitorsimg = file.content.split('base64,')[1]
-			this.$toast('上传成功')
+			this.person.visitorsimg = ''
 		},
 		//确认提交
 		actionGo() {

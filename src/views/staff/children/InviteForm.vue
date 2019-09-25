@@ -41,7 +41,7 @@
         <van-datetime-picker :formatter="filterData" v-model="person.startDate" @confirm="chooseDate(1)" @cancel="chooseDate(1)" type="datetime" />
       </van-popup>
       <van-popup v-model="showEndPicker" position="bottom">
-        <van-datetime-picker v-model="person.endDate" :min-date="person.startDate" @confirm="chooseDate(2)" @cancel="chooseDate(2)" type="datetime" />
+        <van-datetime-picker v-model="person.endDate" :formatter="filterData" :min-date="person.startDate" @confirm="chooseDate(2)" @cancel="chooseDate(2)" type="datetime" />
       </van-popup>
     </div>
     <div class="toast-info" v-show="nopass">

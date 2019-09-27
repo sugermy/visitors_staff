@@ -14,7 +14,7 @@
       </van-cell-group>
       <van-cell-group class="info-main info-two">
         <van-field v-model="person.VisitorsUnit" clearable label="单位" ref="address" @click="focusEvent('address')" placeholder="请输入您的单位" input-align="right" />
-        <van-field v-model="person.PlateNumber" type="tel" clearable label="车牌号" ref="carId" @click="focusEvent('carId')" placeholder="请输入您的车牌号（选填）" input-align="right" />
+        <van-field v-model="person.PlateNumber" type="text" clearable label="车牌号" ref="carId" @click="focusEvent('carId')" placeholder="请输入您的车牌号（选填）" input-align="right" />
         <div class="van-cell van-field">
           <div class="van-cell__title van-field__label"><span>照片</span></div>
           <div class="van-cell__value">
@@ -131,7 +131,7 @@ export default {
 				}
 				this.nopass = false
 				let params = { OpenID: this.$route.query.OpenID, ...this.person }
-				params.VisitorsSex == '男' ? (params.VisitorsSex = 1) : (params.VisitorsSex = 0)
+				params.VisitorsSex == '男' ? (params.VisitorsSex = 0) : (params.VisitorsSex = 1)
 				this.$ajax.post('Home/bindVisitor', {}, params).then(res => {
 					this.bindStatusShow = true
 					if (res.Code == '1') {

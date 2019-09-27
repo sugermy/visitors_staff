@@ -123,7 +123,7 @@ export default {
 				}
 				this.nopass = false
 				let params = { OpenID: this.$route.query.OpenID, ...this.person }
-				params.FoolowSex == '男' ? (params.FoolowSex = 1) : (params.FoolowSex = 0)
+				params.FoolowSex == '男' ? (params.FoolowSex = 0) : (params.FoolowSex = 1)
 				params.MainVisitors = this.$route.query.VisitorsId
 				//新增成功or失败
 				if (this.loading) {

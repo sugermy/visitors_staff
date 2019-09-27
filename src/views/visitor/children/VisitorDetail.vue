@@ -23,11 +23,13 @@
           <div class="van-cell__value">
             <div class="van-field__body only-img">
               <div style="display:none" id="qrcode" ref="qrcode"></div>
-              <img :src="imgSrc" v-show="showQrcode" @click="showImg">
+              <!-- <img :src="imgSrc" v-show="showQrcode" @click="showImg"> -->
+              <van-image width="50" height="50" v-show="showQrcode" :src="imgSrc" alt="111" @click="showImg" />
             </div>
           </div>
         </div>
       </van-cell-group>
+      <div>{{imgInfo}}</div>
     </div>
     <!-- 遮罩层内容s -->
     <div class="prop-img" v-show="showUpload">
@@ -50,13 +52,14 @@ export default {
 			imgSrc: '',
 			showUpload: false, //查看二维码详情
 			showQrcode: false, //解决qrcode生成之前img无地址的尴尬
-			showQRcode: true
+			showQRcode: true,
+			imgInfo: null
 		}
 	},
 	computed: {},
 	created() {
 		this.getInfo()
-		if (this.$route.query.status == '5') {
+		if (this.$route.query.status == '5' || this.$route.query.status == '1') {
 			this.showQRcode = false
 		}
 	},
@@ -66,11 +69,8 @@ export default {
 			this.$ajax.get('Visitor/Invite', { VisitId: this.$route.query.personID }).then(res => {
 				this.person = res[0] || {}
 				this.person.followname == null || this.person.followname == '' ? (this.person.followname = '无') : this.person.followname
-				this.qrcode(this.person.bookingno).then(() => {
-					let imgSrc = this.$refs.qrcode.getElementsByTagName('img')[0]
-					this.imgSrc = imgSrc.src
-					this.showQrcode = true
-				})
+				this.imgSrc = 'data:image/png;base64,' + this.person.bookingno
+				this.showQrcode = true
 			})
 		},
 		qrcode(code) {
@@ -84,7 +84,7 @@ export default {
 				})
 				setTimeout(function() {
 					resolve()
-				}, 100)
+				}, 200)
 			})
 			return p
 		},
@@ -114,7 +114,7 @@ export default {
 			justify-content: flex-end;
 			align-items: center;
 			img {
-				width: 50px;
+				width: 50px !important;
 				height: 50px;
 			}
 		}

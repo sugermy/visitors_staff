@@ -8,10 +8,10 @@ export default {
 	data() {
 		return {}
 	},
-	created() {},
-	mounted() {
+	created() {
 		this.goHome()
 	},
+	mounted() {},
 	methods: {
 		//根据权限判断进入模块
 		goHome() {

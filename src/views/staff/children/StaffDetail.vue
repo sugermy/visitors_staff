@@ -91,10 +91,12 @@ export default {
 				this.person.visitorssex == 0 ? (this.person.visitorssex = '男') : (this.person.visitorssex = '女')
 				this.auditRemark = this.person.remark
 				this.qrcodeHtml = res[0].bookingno || ''
-				this.qrcode(this.qrcodeHtml).then(() => {
-					let imgSrc = this.$refs.qrcode.getElementsByTagName('img')[0]
-					this.imgSrc = imgSrc.src
-				})
+				// this.qrcode(this.qrcodeHtml).then(() => {
+				// 	let imgSrc = this.$refs.qrcode.getElementsByTagName('img')[0]
+				// 	this.imgSrc = imgSrc.src
+				// })
+				this.imgSrc = 'data:image/png;base64,' + this.person.bookingno
+				this.showQrcode = true
 			})
 		},
 		//审核方法

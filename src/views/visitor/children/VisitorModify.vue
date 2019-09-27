@@ -63,7 +63,7 @@ export default {
 		getInfo() {
 			this.$ajax.get('Visitor/QueryFollowVisit', { VisitorsId: this.$route.query.personID }).then(res => {
 				this.person = res[0] || {}
-				this.person.visitorssex == 0 ? (this.person.visitorssex = '女') : (this.person.visitorssex = '男')
+				this.person.visitorssex == 1 ? (this.person.visitorssex = '女') : (this.person.visitorssex = '男')
 				this.fileList.push({ url: 'data:image/jpeg;base64,' + this.person.visitorsimg, isImage: true })
 			})
 		},
@@ -138,7 +138,7 @@ export default {
 				}
 				this.nopass = false
 				let params = { VisitorsId: this.$route.query.personID, ...this.person }
-				params.visitorssex == '男' ? (params.visitorssex = 1) : (params.visitorssex = 0)
+				params.visitorssex == '男' ? (params.visitorssex = 0) : (params.visitorssex = 1)
 				//新增成功or失败
 				if (this.loading) {
 					this.loading = false

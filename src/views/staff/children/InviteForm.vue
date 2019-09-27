@@ -192,7 +192,7 @@ export default {
 							StartTime: this.formatSData,
 							EndTime: this.formatEData
 						}
-						params.VisitorsSex == '男' ? (params.VisitorsSex = 1) : (params.VisitorsSex = 0)
+						params.VisitorsSex == '男' ? (params.VisitorsSex = 0) : (params.VisitorsSex = 1)
 						delete params.startDate
 						delete params.endDate
 						this.toast.loading({

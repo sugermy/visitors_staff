@@ -132,7 +132,14 @@ export default {
 				this.nopass = false
 				let params = { OpenID: this.$route.query.OpenID, ...this.person }
 				params.VisitorsSex == '男' ? (params.VisitorsSex = 0) : (params.VisitorsSex = 1)
+				this.toast.loading({
+					mask: true,
+					message: '正在绑定...',
+					loadingType: 'spinner',
+					duration: 0 //0不会自动关闭  调用Toast.clear()关闭
+				})
 				this.$ajax.post('Home/bindVisitor', {}, params).then(res => {
+					this.toast.clear()
 					this.bindStatusShow = true
 					if (res.Code == '1') {
 						this.bindStatus = true

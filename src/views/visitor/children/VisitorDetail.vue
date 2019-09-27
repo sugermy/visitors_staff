@@ -23,8 +23,7 @@
           <div class="van-cell__value">
             <div class="van-field__body only-img">
               <div style="display:none" id="qrcode" ref="qrcode"></div>
-              <!-- <img :src="imgSrc" v-show="showQrcode" @click="showImg"> -->
-              <van-image width="50" height="50" v-show="showQrcode" :src="imgSrc" alt="111" @click="showImg" />
+              <img :src="imgSrc" v-show="showQrcode" @click="showImg">
             </div>
           </div>
         </div>
@@ -59,7 +58,7 @@ export default {
 	computed: {},
 	created() {
 		this.getInfo()
-		if (this.$route.query.status == '5' || this.$route.query.status == '1') {
+		if (this.$route.query.status == '5' || this.$route.query.status == '1' || this.$route.query.status == '4') {
 			this.showQRcode = false
 		}
 	},
@@ -69,7 +68,7 @@ export default {
 			this.$ajax.get('Visitor/Invite', { VisitId: this.$route.query.personID }).then(res => {
 				this.person = res[0] || {}
 				this.person.followname == null || this.person.followname == '' ? (this.person.followname = '无') : this.person.followname
-				this.imgSrc = 'data:image/png;base64,' + this.person.bookingno
+				this.imgSrc = 'data:image/jpeg;base64,' + this.person.bookingno
 				this.showQrcode = true
 			})
 		},

@@ -7,7 +7,7 @@
 <script>
 export default {
 	data() {
-		return { flags: false, position: { x: 0, y: 0 }, nx: '', ny: '', dx: '', dy: '', xPum: '', yPum: '', showBack: true }
+		return { flags: false, position: { x: 0, y: 0 }, nx: '', ny: '', dx: '', dy: '', xPum: '', yPum: '', showBack: false }
 	},
 	methods: {
 		// 实现移动端拖拽

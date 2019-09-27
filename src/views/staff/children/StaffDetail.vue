@@ -76,6 +76,9 @@ export default {
 				document.title = '待审核'
 				this.isQrcode = false
 				this.remarkEdit = true
+			} else if (status == '1') {
+				this.isQrcode = false
+				this.remarkEdit = true
 			} else {
 				this.isQrcode = true
 				this.showQrcode = true
@@ -91,11 +94,7 @@ export default {
 				this.person.visitorssex == 0 ? (this.person.visitorssex = '男') : (this.person.visitorssex = '女')
 				this.auditRemark = this.person.remark
 				this.qrcodeHtml = res[0].bookingno || ''
-				// this.qrcode(this.qrcodeHtml).then(() => {
-				// 	let imgSrc = this.$refs.qrcode.getElementsByTagName('img')[0]
-				// 	this.imgSrc = imgSrc.src
-				// })
-				this.imgSrc = 'data:image/png;base64,' + this.person.bookingno
+				this.imgSrc = 'data:image/jpeg;base64,' + this.person.bookingno
 				this.showQrcode = true
 			})
 		},

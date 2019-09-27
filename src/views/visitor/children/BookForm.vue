@@ -165,12 +165,6 @@ export default {
 			if (count == 0) {
 				if (this.checkPhone()) {
 					this.nopass = false
-					this.toast.loading({
-						mask: true,
-						message: '正在发送...',
-						loadingType: 'spinner',
-						duration: 0 //0不会自动关闭  调用Toast.clear()关闭
-					})
 					let _this = this
 					let params = { OpenID: this.$route.query.OpenID, VisitId: this.$route.query.VisitorsId, ...this.person, StartTime: this.formatSData, EndTime: this.formatEData }
 					delete params.startDate
@@ -180,6 +174,12 @@ export default {
 						return {
 							FoolowID: el.visitorsid
 						}
+					})
+					this.toast.loading({
+						mask: true,
+						message: '正在发送...',
+						loadingType: 'spinner',
+						duration: 0 //0不会自动关闭  调用Toast.clear()关闭
 					})
 					this.$ajax.post('Visitor/SubmitVisit', {}, { Bs_visit: JSON.stringify(params) }).then(res => {
 						this.toast.clear()

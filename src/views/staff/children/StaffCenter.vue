@@ -137,6 +137,9 @@ export default {
 					p {
 						line-height: 2.2rem;
 						margin-top: 1rem;
+						&:last-child {
+							margin-bottom: 1rem;
+						}
 					}
 				}
 				.each-r {

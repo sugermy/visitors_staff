@@ -83,7 +83,7 @@ export default {
 			bindStatus: false, //绑定状态
 			imgSrcSuc: require('../../../assets/send_suc.png'),
 			imgSrcLose: require('../../../assets/send_lose.png'),
-			actions: [{ name: '男', value: 1 }, { name: '女', value: 2 }],
+			actions: [{ name: '男', value: 1 }, { name: '女', value: 0 }],
 			notxt: '请填写完整您的信息'
 		}
 	},
@@ -192,7 +192,7 @@ export default {
 							StartTime: this.formatSData,
 							EndTime: this.formatEData
 						}
-						params.VisitorsSex == '男' ? (params.VisitorsSex = 0) : (params.VisitorsSex = 1)
+						params.VisitorsSex == '男' ? (params.VisitorsSex = 1) : (params.VisitorsSex = 0)
 						delete params.startDate
 						delete params.endDate
 						this.toast.loading({

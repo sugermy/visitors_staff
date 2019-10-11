@@ -46,7 +46,7 @@ export default {
 			notxt: '请填写完整提交信息',
 			fileList: [],
 			genderVisible: false,
-			actions: [{ name: '男', value: 1 }, { name: '女', value: 2 }],
+			actions: [{ name: '男', value: 1 }, { name: '女', value: 0 }],
 			loading: true
 		}
 	},
@@ -123,7 +123,7 @@ export default {
 				}
 				this.nopass = false
 				let params = { OpenID: this.$route.query.OpenID, ...this.person }
-				params.FoolowSex == '男' ? (params.FoolowSex = 0) : (params.FoolowSex = 1)
+				params.FoolowSex == '男' ? (params.FoolowSex = 1) : (params.FoolowSex = 0)
 				params.MainVisitors = this.$route.query.VisitorsId
 				//新增成功or失败
 				if (this.loading) {

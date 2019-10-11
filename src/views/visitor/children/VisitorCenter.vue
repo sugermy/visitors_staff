@@ -9,6 +9,7 @@
               <div class="each-body">
                 <div class="each-l">
                   <p>电话：{{item.mobile}}</p>
+                  <p>时间：{{item.starttime}}</p>
                   <p>来访事由：{{item.visitreason}}</p>
                 </div>
                 <img class="each-r" :src="require(`../../../assets/status${item.status}.png`)" />

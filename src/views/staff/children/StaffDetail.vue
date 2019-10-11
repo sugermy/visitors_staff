@@ -91,7 +91,7 @@ export default {
 		getDetail() {
 			this.$ajax.get('Staff/GetVisitInfo', { VisitId: this.$route.query.visitid }).then(res => {
 				this.person = res[0] || {}
-				this.person.visitorssex == 0 ? (this.person.visitorssex = '男') : (this.person.visitorssex = '女')
+				this.person.visitorssex == 1 ? (this.person.visitorssex = '男') : (this.person.visitorssex = '女')
 				this.auditRemark = this.person.remark
 				this.qrcodeHtml = res[0].bookingno || ''
 				this.imgSrc = 'data:image/jpeg;base64,' + this.person.bookingno

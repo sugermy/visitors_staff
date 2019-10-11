@@ -56,7 +56,7 @@ export default {
 			imgSrcLose: require('../../../assets/bind_lose.png'),
 			bindStatusShow: false,
 			bindStatus: false,
-			actions: [{ name: '男', value: 1 }, { name: '女', value: 2 }]
+			actions: [{ name: '男', value: 1 }, { name: '女', value: 0 }]
 		}
 	},
 	created() {},
@@ -131,7 +131,7 @@ export default {
 				}
 				this.nopass = false
 				let params = { OpenID: this.$route.query.OpenID, ...this.person }
-				params.VisitorsSex == '男' ? (params.VisitorsSex = 0) : (params.VisitorsSex = 1)
+				params.VisitorsSex == '男' ? (params.VisitorsSex = 1) : (params.VisitorsSex = 0)
 				this.toast.loading({
 					mask: true,
 					message: '正在绑定...',

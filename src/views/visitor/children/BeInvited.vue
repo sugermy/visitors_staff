@@ -45,7 +45,7 @@ export default {
 		getDetail() {
 			this.$ajax.get('Visitor/Invite', { VisitId: this.$route.query.personID }).then(res => {
 				this.person = res[0] || {}
-				this.person.visitorssex == 0 ? (this.person.visitorssex = '男') : (this.person.visitorssex = '女')
+				this.person.visitorssex == 1 ? (this.person.visitorssex = '男') : (this.person.visitorssex = '女')
 				this.person.followname == null || this.person.followname == '' ? (this.person.followname = '无') : this.person.followname
 			})
 		},

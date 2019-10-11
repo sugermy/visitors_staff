@@ -64,7 +64,8 @@ export default {
 			this.$ajax.get('Visitor/QueryFollowVisit', { VisitorsId: this.$route.query.personID }).then(res => {
 				this.person = res[0] || {}
 				this.person.visitorssex == 1 ? (this.person.visitorssex = '女') : (this.person.visitorssex = '男')
-				this.fileList.push({ url: 'data:image/jpeg;base64,' + this.person.visitorsimg, isImage: true })
+				// this.fileList.push({ url: 'data:image/jpeg;base64,' + this.person.visitorsimg, isImage: true })
+				this.fileList.push({ url: this.person.visitorsimg, isImage: true })
 			})
 		},
 		//表单获取焦点事件

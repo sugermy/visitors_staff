@@ -2,8 +2,8 @@
   <div class="page">
     <van-tabs v-model="activeTab" animated color="#637BFF" line-width="30px">
       <van-tab title="预约信息">
-        <van-pull-refresh class="pull-refresh" v-model="isLoading" @refresh="onRefresh">
-          <div class="page-main" v-if="booklist.length>=1">
+        <van-pull-refresh class="pull-refresh" v-if="booklist.length>=1" v-model="isLoading" @refresh="onRefresh">
+          <div class="page-main">
             <div v-for="(item,index) in booklist" :key="index" class="list-book" @click="enterDetail(item.status,item.visitid)">
               <h3 class="each-name">{{item.realname}}</h3>
               <div class="each-body">

@@ -26,6 +26,7 @@ new Vue({
   render: h => h(App)
 }).$mount('#app')
 
+
 //路由跳转守卫判断是否是登录态
 router.beforeEach((to, from, next) => {
   if (to.meta.title) {

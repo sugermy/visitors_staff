@@ -1,5 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+
+const originalPush = Router.prototype.push
+Router.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 // 第一次接入
 const FirstIndex = () => import('./views/first/index.vue');
 const SelectRole = () => import('./views/first/childern/SelectRole.vue');
@@ -30,6 +35,7 @@ export default new Router({
   routes: [
     {
       path: '/FirstIndex',
+      name: 'FirstIndex',
       redirect: '/FirstIndex/SelectRole',
       component: FirstIndex,
       children: [
@@ -61,6 +67,7 @@ export default new Router({
     },
     {
       path: '/StaffIndex',
+      name: 'StaffIndex',
       redirect: '/StaffIndex/StaffSelectTo',
       component: StaffIndex,
       children: [
@@ -108,6 +115,7 @@ export default new Router({
     },
     {
       path: '/VisitorIndex',
+      name: 'VisitorIndex',
       redirect: '/VisitorIndex/VisitorSelectTo',
       component: VisitorIndex,
       children: [

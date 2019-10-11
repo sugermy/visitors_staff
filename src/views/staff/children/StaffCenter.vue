@@ -2,18 +2,20 @@
   <div class="page">
     <van-tabs v-model="active" animated color="#637BFF" line-width="30px">
       <van-tab title="预约信息">
-        <div class="page-main" v-if="visitiList.length>0">
-          <div v-for="(item,index) in visitiList" :key="index" class="list-book" @click="enterDetail(item.visitid,item.status)">
-            <h3 class="each-name">{{item.visitorsname}}</h3>
-            <div class="each-body">
-              <div class="each-l">
-                <p>电话：{{item.visitorsphone}}</p>
-                <p>来访事由：{{item.visitreason}}</p>
+        <van-pull-refresh class="pull-refresh" v-model="isLoading" @refresh="onRefresh">
+          <div class="page-main" v-if="visitiList.length>0">
+            <div v-for="(item,index) in visitiList" :key="index" class="list-book" @click="enterDetail(item.visitid,item.status)">
+              <h3 class="each-name">{{item.visitorsname}}</h3>
+              <div class="each-body">
+                <div class="each-l">
+                  <p>电话：{{item.visitorsphone}}</p>
+                  <p>来访事由：{{item.visitreason}}</p>
+                </div>
+                <img class="each-r" :src="require(`../../../assets/status${item.status}.png`)" />
               </div>
-              <img class="each-r" :src="require(`../../../assets/status${item.status}.png`)" />
             </div>
           </div>
-        </div>
+        </van-pull-refresh>
         <div class="page-no" v-if="visitiList.length==0">暂无预约信息</div>
       </van-tab>
       <van-tab title="个人信息">
@@ -45,7 +47,8 @@ export default {
 		return {
 			active: 0,
 			visitiList: [], //预约列表
-			personalInfo: {} //个人信息
+			personalInfo: {}, //个人信息
+			isLoading: false
 		}
 	},
 	created() {
@@ -53,6 +56,14 @@ export default {
 		this.getInfo()
 	},
 	methods: {
+		//刷新列表
+		onRefresh() {
+			this.$ajax.get('Staff/GetReservation', { UserId: this.$route.query.UserID }).then(res => {
+				this.visitiList = res || []
+				this.toast('刷新成功')
+				this.isLoading = false
+			})
+		},
 		//获取预约信息
 		getList() {
 			this.$ajax.get('Staff/GetReservation', { UserId: this.$route.query.UserID }).then(res => {
@@ -209,6 +220,9 @@ export default {
 	.page-no {
 		text-align: center;
 		margin-top: 10%;
+	}
+	.pull-refresh {
+		min-height: calc(100vh - 44px);
 	}
 }
 </style>

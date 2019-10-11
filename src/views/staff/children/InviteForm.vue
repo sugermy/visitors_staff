@@ -208,7 +208,6 @@ export default {
 							if (res.Code == '1') {
 								this.bindStatus = true
 							} else {
-								this.toast(res.Message)
 								this.bindStatus = false
 							}
 						})

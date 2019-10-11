@@ -188,7 +188,6 @@ export default {
 							this.bindStatus = true
 						} else {
 							this.bindStatus = false
-							this.toast(res.Message)
 						}
 					})
 					setTimeout(function() {

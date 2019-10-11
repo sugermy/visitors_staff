@@ -14,7 +14,7 @@
       </van-cell-group>
       <van-cell-group class="info-main info-two">
         <van-field v-model="person.FoolowUnit" clearable label="单位" ref="FoolowUnit" @click="focusEvent('FoolowUnit')" placeholder="请输入单位" input-align="right" />
-        <van-field v-model="person.FoolowCarNumber" type="tel" clearable label="车牌号" ref="FoolowCarNumber" @click="focusEvent('FoolowCarNumber')" placeholder="请输入车牌号（选填）"
+        <van-field v-model="person.FoolowCarNumber" type="text" clearable label="车牌号" ref="FoolowCarNumber" @click="focusEvent('FoolowCarNumber')" placeholder="请输入车牌号（选填）"
           input-align="right" />
         <div class="van-cell van-field">
           <div class="van-cell__title van-field__label"><span>照片</span></div>

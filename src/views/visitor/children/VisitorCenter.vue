@@ -2,18 +2,20 @@
   <div class="page">
     <van-tabs v-model="activeTab" animated color="#637BFF" line-width="30px">
       <van-tab title="预约信息">
-        <div class="page-main" v-if="booklist.length>=1">
-          <div v-for="(item,index) in booklist" :key="index" class="list-book" @click="enterDetail(item.status,item.visitid)">
-            <h3 class="each-name">{{item.realname}}</h3>
-            <div class="each-body">
-              <div class="each-l">
-                <p>电话：{{item.mobile}}</p>
-                <p>来访事由：{{item.visitreason}}</p>
+        <van-pull-refresh class="pull-refresh" v-model="isLoading" @refresh="onRefresh">
+          <div class="page-main" v-if="booklist.length>=1">
+            <div v-for="(item,index) in booklist" :key="index" class="list-book" @click="enterDetail(item.status,item.visitid)">
+              <h3 class="each-name">{{item.realname}}</h3>
+              <div class="each-body">
+                <div class="each-l">
+                  <p>电话：{{item.mobile}}</p>
+                  <p>来访事由：{{item.visitreason}}</p>
+                </div>
+                <img class="each-r" :src="require(`../../../assets/status${item.status}.png`)" />
               </div>
-              <img class="each-r" :src="require(`../../../assets/status${item.status}.png`)" />
             </div>
           </div>
-        </div>
+        </van-pull-refresh>
         <div class="page-no" v-if="booklist.length==0">暂无预约信息</div>
       </van-tab>
       <van-tab title="访客信息">
@@ -54,7 +56,8 @@ export default {
 		return {
 			activeTab: 0,
 			booklist: [],
-			suitelist: []
+			suitelist: [],
+			isLoading: false
 		}
 	},
 	created() {
@@ -65,6 +68,14 @@ export default {
 		this.getSuite()
 	},
 	methods: {
+		//刷新列表
+		onRefresh() {
+			this.$ajax.get('Visitor/GetReservation', { VisitorsId: this.$route.query.VisitorsId }).then(res => {
+				this.booklist = res || []
+				this.toast('刷新成功')
+				this.isLoading = false
+			})
+		},
 		//获取列表信息
 		getList() {
 			this.$ajax.get('Visitor/GetReservation', { VisitorsId: this.$route.query.VisitorsId }).then(res => {
@@ -283,6 +294,9 @@ export default {
 	.page-no {
 		text-align: center;
 		margin-top: 10%;
+	}
+	.pull-refresh {
+		min-height: calc(100vh - 44px);
 	}
 }
 </style>

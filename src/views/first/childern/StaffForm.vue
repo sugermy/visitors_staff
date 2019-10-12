@@ -76,7 +76,7 @@ export default {
 						loadingType: 'spinner',
 						duration: 0 //0不会自动关闭  调用Toast.clear()关闭
 					})
-					this.$ajax.get('Home/bindStaff', params).then(res => {
+					this.$ajax.post('Home/bindStaff', {}, params).then(res => {
 						this.toast.clear()
 						this.bindStatusShow = true
 						if (res.Code == '1') {

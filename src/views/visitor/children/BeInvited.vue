@@ -56,7 +56,14 @@ export default {
 		//审核状态
 		auditGo(type) {
 			window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+			this.toast.loading({
+				mask: true,
+				message: '审核中...',
+				loadingType: 'spinner',
+				duration: 0 //0不会自动关闭  调用Toast.clear()关闭
+			})
 			this.$ajax.get('Staff/UpdateAudit', { VisitId: this.$route.query.personID, AuditState: type, AuditRemark: this.auditRemark }).then(res => {
+				this.toast.clear()
 				if (res.Code == '1') {
 					this.toast(res.Message)
 					let _this = this

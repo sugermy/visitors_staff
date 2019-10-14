@@ -9,7 +9,7 @@
           input-align="right" />
         <van-field v-model="person.visitorssex" type="text" label="性别" readonly is-link input-align="right" @click="chooseSex" />
         <van-action-sheet v-model="genderVisible" cancel-text="取消" :actions="actions" @select="onSelect" />
-        <van-field v-model="person.visitorsidcard" type="tel" ref="visitorsunit" clearable label="身份证号" @click="focusEvent('visitorsunit')" @blur="checkVal(2)"
+        <van-field v-model="person.visitorsidcard" type="tel" ref="visitorsunit" readonly clearable label="身份证号" @click="focusEvent('visitorsunit')" @blur="checkVal(2)"
           placeholder="请输入身份证号" input-align="right" />
       </van-cell-group>
       <van-cell-group class="info-main info-two">
@@ -110,8 +110,10 @@ export default {
 		//图片上传
 		afterRead(file) {
 			//自动转base64
-			this.person.visitorsimg = file.content.split('base64,')[1]
-			this.$toast('上传成功')
+			this.dealImg(file.content, 200, res => {
+				this.person.visitorsimg = encodeURI(res.split('base64,')[1])
+				this.$toast('上传成功')
+			})
 		},
 		//删除图片
 		deletPhoto(file) {
@@ -143,9 +145,16 @@ export default {
 				//新增成功or失败
 				if (this.loading) {
 					this.loading = false
+					this.toast.loading({
+						mask: true,
+						message: '正在修改...',
+						loadingType: 'spinner',
+						duration: 0 //0不会自动关闭  调用Toast.clear()关闭
+					})
 					this.$ajax
 						.post('Visitor/EditFollowVisit', {}, params)
 						.then(res => {
+							this.toast.clear()
 							if (res.Code == '1') {
 								this.toast(res.Message)
 								let _this = this

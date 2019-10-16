@@ -1,6 +1,6 @@
 let dealImg = function dealImage (base64, w, callback) {
   var newImage = new Image();
-  var quality = 0.6;    //压缩系数0-1之间
+  var quality = 0.9;    //压缩系数0-1之间
   newImage.src = base64;
   newImage.setAttribute("crossOrigin", 'Anonymous');	//url为外域时需要
   var imgWidth, imgHeight;
@@ -20,7 +20,7 @@ let dealImg = function dealImage (base64, w, callback) {
     } else {
       canvas.width = imgWidth;
       canvas.height = imgHeight;
-      quality = 0.6;
+      quality = 0.9;
     }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(this, 0, 0, canvas.width, canvas.height);

@@ -94,7 +94,7 @@ export default {
 		//图片上传
 		afterRead(file) {
 			//自动转base64
-			this.dealImg(file.content, 200, res => {
+			this.dealImg(file.content, 600, res => {
 				this.person.FoolowImg = encodeURI(res.split('base64,')[1])
 				this.$toast('上传成功')
 			})

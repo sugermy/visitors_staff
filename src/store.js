@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     suitelist: [],
-    bookForm: {}
+    bookForm: {},
   },
   mutations: {
     chooseSuite (state, data) {

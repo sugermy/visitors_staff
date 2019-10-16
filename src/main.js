@@ -20,7 +20,6 @@ Vue.prototype.dealImg = dealImg;
 FastClick.attach(document.body);
 
 Vue.config.productionTip = false
-
 new Vue({
   router,
   store,

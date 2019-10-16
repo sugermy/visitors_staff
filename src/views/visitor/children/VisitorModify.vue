@@ -19,7 +19,7 @@
           <div class="van-cell__title van-field__label"><span>照片</span></div>
           <div class="van-cell__value">
             <div class="van-field__body init-s">
-              <van-uploader v-model="fileList" :after-read="afterRead" @delete="deletPhoto" :preview-size="40" :max-count='1' />
+              <van-uploader  v-model="fileList" :after-read="afterRead" @delete="deletPhoto" :preview-size="40" :max-count='1' />
             </div>
           </div>
         </div>
@@ -50,7 +50,8 @@ export default {
 			genderVisible: false,
 			actions: [{ name: '男', value: 1 }, { name: '女', value: 2 }],
 			notxt: '请填写完整提交信息',
-			loading: true
+			loading: true,
+			rolate: false
 		}
 	},
 	created() {
@@ -58,6 +59,9 @@ export default {
 			this.title = '访客'
 		}
 		this.getInfo()
+		if (window.navigator.userAgent.indexOf('iPhone') != -1) {
+			this.rolate = true
+		}
 	},
 	methods: {
 		getInfo() {
@@ -110,7 +114,7 @@ export default {
 		//图片上传
 		afterRead(file) {
 			//自动转base64
-			this.dealImg(file.content, 200, res => {
+			this.dealImg(file.content, 500, res => {
 				this.person.visitorsimg = encodeURI(res.split('base64,')[1])
 				this.$toast('上传成功')
 			})

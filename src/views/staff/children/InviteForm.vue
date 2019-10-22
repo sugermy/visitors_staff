@@ -34,7 +34,7 @@
             </div>
           </div>
         </div>
-        <van-field v-model="person.VisitReason" type="textarea" clearable label="来访事由" autosize ref="VisitReason" @click="focusEvent('VisitReason')" placeholder="请输入来访事由说明"
+        <van-field v-model="person.VisitReason" type="textarea" readonly clearable label="来访事由" autosize ref="VisitReason" @click="focusEvent('VisitReason')" placeholder="请输入来访事由说明"
           input-align="right" />
       </van-cell-group>
       <van-popup v-model="showStartPicker" position="bottom">
@@ -73,7 +73,7 @@ export default {
 				PlateNumber: '',
 				startDate: new Date(),
 				endDate: new Date(),
-				VisitReason: ''
+				VisitReason: '安博会交流'
 			},
 			nopass: false,
 			genderVisible: false,
@@ -98,7 +98,10 @@ export default {
 			return this.person.startDate
 		}
 	},
-	created() {},
+	created() {
+		this.person.endDate.setHours(23)
+		this.person.endDate.setMinutes(59)
+	},
 	methods: {
 		filterData(type, value) {
 			if (type === 'year') {
@@ -254,7 +257,10 @@ export default {
 	},
 	watch: {
 		initData(v) {
-			this.person.endDate = v
+			let year = v.getFullYear()
+			let month = v.getMonth()
+			let day = v.getDate()
+			this.person.endDate = new Date(year, month, day, 23, 59, 0)
 		}
 	}
 }

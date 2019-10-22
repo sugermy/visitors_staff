@@ -21,13 +21,13 @@
         </div>
       </van-cell-group>
       <van-cell-group class="info-main">
-        <van-field v-model="person.RealName" clearable label="被访员工姓名" ref="RealName" placeholder="请输入被访员工姓名" @click="focusEvent('RealName')" input-align="right" />
-        <van-field v-model="person.Mobile" type="tel" clearable label="被访员工手机" @blur="checkVal(1)" ref="Mobile" placeholder="请输入被访员工手机号" @click="focusEvent('Mobile')"
+        <van-field v-model="person.RealName" clearable label="被访员工姓名" readonly ref="RealName" placeholder="请输入被访员工姓名" @click="focusEvent('RealName')" input-align="right" />
+        <van-field v-model="person.Mobile" type="tel" clearable label="被访员工手机" readonly @blur="checkVal(1)" ref="Mobile" placeholder="请输入被访员工手机号" @click="focusEvent('Mobile')"
           input-align="right" />
-        <van-field v-model="person.Code" type="text" ref="Code" clearable label="被访员工工号" @click="focusEvent('Code')" placeholder="请输入被访员工工号" input-align="right" />
+        <van-field v-model="person.Code" type="text" ref="Code" clearable label="被访员工工号" readonly @click="focusEvent('Code')" placeholder="请输入被访员工工号" input-align="right" />
       </van-cell-group>
       <van-cell-group class="info-main">
-        <van-field v-model="person.VisitReason" type="textarea" clearable label="来访事由" autosize ref="VisitReason" @click="focusEvent('VisitReason')" placeholder="请输入来访事由说明"
+        <van-field v-model="person.VisitReason" type="textarea" clearable label="来访事由" readonly autosize ref="VisitReason" @click="focusEvent('VisitReason')" placeholder="请输入来访事由说明"
           input-align="right" />
         <van-field v-model="person.SuiteList" type="textarea" clearable label="随访人员" readonly autosize ref="remark1" placeholder="请添加随访人员" input-align="right" />
       </van-cell-group>
@@ -60,12 +60,12 @@ export default {
 	data() {
 		return {
 			person: {
-				RealName: '',
-				Mobile: '',
-				Code: '',
+				RealName: '陈燕',
+				Mobile: '13267077431',
+				Code: 'DC00001',
 				startDate: new Date(),
 				endDate: new Date(),
-				VisitReason: ''
+				VisitReason: '安博会交流'
 			},
 			nopass: false,
 			genderVisible: false,
@@ -101,6 +101,8 @@ export default {
 			}
 			this.person.SuiteList = this.$store.state.suitelist.map(el => el.visitorsname).join('、')
 		})
+		this.person.endDate.setHours(23)
+		this.person.endDate.setMinutes(59)
 	},
 	methods: {
 		filterData(type, value) {
@@ -245,7 +247,10 @@ export default {
 	watch: {
 		initData(v) {
 			if (this.canChange) {
-				this.person.endDate = v
+				let year = v.getFullYear()
+				let month = v.getMonth()
+				let day = v.getDate()
+				this.person.endDate = new Date(year, month, day, 23, 59, 0)
 			}
 		}
 	}
